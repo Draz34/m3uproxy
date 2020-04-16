@@ -1,8 +1,13 @@
 FROM golang:latest
 
-RUN go install m3uproxy/main.go
-RUN mv bin/main bin/m3uproxy
+RUN mkdir /app
 
-COPY bin/m3uproxy /usr/local/bin
+ADD . /app/
 
-CMD m3uproxy
+WORKDIR /app
+
+RUN go build -o main .
+
+RUN ls -l
+
+CMD ["/app/main"]
