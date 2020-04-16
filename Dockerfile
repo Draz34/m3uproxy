@@ -1,6 +1,6 @@
 FROM alpine:3.10
 
-RUN ./m3uproxy.sh build
+RUN m3uproxy.sh build
 
 COPY bin/m3uproxy /usr/local/bin
 
