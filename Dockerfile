@@ -10,4 +10,4 @@ RUN go build -o main .
 
 RUN ls -l
 
-CMD ["/app/main"]
+CMD ["/app/m3uproxy/main"]
