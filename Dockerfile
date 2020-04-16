@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM golang:latest
 
 RUN go install m3uproxy/main.go
 RUN mv bin/main bin/m3uproxy
