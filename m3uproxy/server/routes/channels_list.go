@@ -84,8 +84,11 @@ func LoadList(config *config.Config) ([]byte, *LoadingChannelsError) {
 }
 
 func modifyResponse(config *config.Config, payload string) ([]byte, error) {
-	newPayload := strings.Replace(payload, "\r\n", "\n", -1)
-	lines := strings.Split(string(newPayload), "\r\n")
+	newPayload1 := strings.Replace(payload, "\r\n", "\n", -1)
+	newPayload2 := strings.Replace(newPayload1, "\n", "", -1)
+	newPayload3 := strings.Replace(newPayload2, "http://", "\nhttp://", -1)
+	newPayload4 := strings.Replace(newPayload3, "#EXTINF", "\n#EXTINF", -1)
+	lines := strings.Split(string(newPayload4), "\n")
 
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]

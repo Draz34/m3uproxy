@@ -2,14 +2,15 @@ package routes
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/Draz34/m3uproxy/config"
-	"github.com/Draz34/m3uproxy/db"
-	"github.com/Draz34/m3uproxy/server/webutils"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+
+	"github.com/Draz34/m3uproxy/config"
+	"github.com/Draz34/m3uproxy/db"
+	"github.com/Draz34/m3uproxy/server/webutils"
+	"github.com/gorilla/mux"
 )
 
 const QueryParamLocation = "location"

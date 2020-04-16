@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/server"
 )

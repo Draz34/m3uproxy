@@ -2,11 +2,12 @@ package routes
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
+	"net/http"
+
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/db"
 	"github.com/Draz34/m3uproxy/server/webutils"
-	"net/http"
+	"github.com/gorilla/mux"
 )
 
 func ChannelInfoRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {

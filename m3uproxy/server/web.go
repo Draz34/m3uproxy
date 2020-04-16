@@ -3,14 +3,15 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/Draz34/m3uproxy/config"
-	"github.com/Draz34/m3uproxy/server/routes"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/Draz34/m3uproxy/config"
+	"github.com/Draz34/m3uproxy/server/routes"
+	"github.com/gorilla/mux"
 )
 
 const Logo = ` 

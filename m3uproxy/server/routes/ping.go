@@ -1,9 +1,10 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/server/webutils"
-	"net/http"
 )
 
 var bytes = []byte("pong")
