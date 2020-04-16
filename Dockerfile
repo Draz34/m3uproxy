@@ -8,6 +8,4 @@ WORKDIR /app/m3uproxy
 
 RUN go build -o main .
 
-RUN ls -l
-
 CMD ["/app/m3uproxy/main"]
