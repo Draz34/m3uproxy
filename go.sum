@@ -1,3 +1,4 @@
+github.com/Draz34/m3uproxy v0.0.0-20191017132105-6cac9cb27d1d h1:9OxTLUi3pATMwIcsudMITYiyRKZTLgdIzFxWb1AX5MA=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

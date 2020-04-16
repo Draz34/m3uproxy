@@ -2,12 +2,13 @@ package routes
 
 import (
 	"fmt"
-	"github.com/hmarcelino/m3uproxy/config"
-	"github.com/hmarcelino/m3uproxy/db"
-	"github.com/hmarcelino/m3uproxy/server/webutils"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/Draz34/m3uproxy/config"
+	"github.com/Draz34/m3uproxy/db"
+	"github.com/Draz34/m3uproxy/server/webutils"
 )
 
 const UriChannelList = "/channels"
@@ -83,7 +84,8 @@ func LoadList(config *config.Config) ([]byte, *LoadingChannelsError) {
 }
 
 func modifyResponse(config *config.Config, payload string) ([]byte, error) {
-	lines := strings.Split(string(payload), "\r\n")
+	newPayload := strings.Replace(payload, "\r\n", "\n", -1)
+	lines := strings.Split(string(newPayload), "\r\n")
 
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]

@@ -1,6 +1,6 @@
 server:
   port: 9090
-  hostname: server.local
+  hostname: 127.0.0.1
 
 m3u:
-  url: http://localhost:8080/channels.m3u
+  url: http://m3u.test/channels.m3u

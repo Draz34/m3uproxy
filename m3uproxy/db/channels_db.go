@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 	"strings"
 )
@@ -15,12 +16,15 @@ var channelsDB = make(map[string]*Channel)
 
 // Channel is in the form of http://server:port/username/password/channel_id
 func NewChannel(channelAddr string) (*Channel, error) {
+	log.Printf(channelAddr)
 	urlChannel, err := url.Parse(channelAddr)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing url: %s", channelAddr)
 	}
 
 	path := urlChannel.Path
+
+	log.Printf(urlChannel.Path)
 
 	return &Channel{
 		Id:     path[strings.LastIndex(path, "/")+1:], // extract only the channel_id

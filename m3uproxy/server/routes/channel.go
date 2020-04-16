@@ -3,9 +3,9 @@ package routes
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/hmarcelino/m3uproxy/config"
-	"github.com/hmarcelino/m3uproxy/db"
-	"github.com/hmarcelino/m3uproxy/server/webutils"
+	"github.com/Draz34/m3uproxy/config"
+	"github.com/Draz34/m3uproxy/db"
+	"github.com/Draz34/m3uproxy/server/webutils"
 	"log"
 	"net/http"
 	"net/http/httputil"
