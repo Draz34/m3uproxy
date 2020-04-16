@@ -33,14 +33,14 @@ http://localhost:9090/channels/984
 
 * GET /channels/{id}
 ```bash
-$> curl http://localhost:9090/channel/984
+$> curl http://localhost:9090/channels/984
 
 ... stream ...
 ```
 
 * GET /channels/info/{id}
 ```bash
-$> curl http://localhost:9090/channel/info/984
+$> curl http://localhost:9090/channels/info/984
 
 {
     Id: "984",
