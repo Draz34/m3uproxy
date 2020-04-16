@@ -85,6 +85,6 @@ go run m3uproxy/main.go
 
 #or 
 
-docker run -e M3U_PROXY_CHANNELS_URL="<valid url to m3u list>" -p 9090:9090  m3uproxy:latest
+docker run -d -e M3U_PROXY_CHANNELS_URL="<valid url to m3u list>" -p 9090:9090 draz34/m3uproxy:latest
  
 ```
