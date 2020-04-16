@@ -4,7 +4,7 @@ RUN mkdir /app
 
 ADD . /app/
 
-WORKDIR /app
+WORKDIR /app/m3uproxy
 
 RUN go build -o main .
 
