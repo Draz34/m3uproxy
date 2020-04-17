@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/Draz34/m3uproxy/config"
+	"github.com/Draz34/m3uproxy/db"
 	"github.com/Draz34/m3uproxy/server/routes"
 	"github.com/gorilla/mux"
 )
@@ -37,6 +39,16 @@ func Start(config *config.Config) {
 	register(muxRouter, config, routes.ChannelRoute)
 	register(muxRouter, config, routes.ChannelInfoRoute)
 
+	//Log not found routes
+	//muxRouter.NotFoundHandler = muxRouter.NewRoute().HandlerFunc(http.NotFound).GetHandler()
+	//muxRouter.Use(simpleMw)
+	muxRouter.NotFoundHandler = muxRouter.NewRoute().HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(404)
+			w.Write([]byte("404 not found"))
+			log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		}).GetHandler()
+
 	fmt.Printf(
 		Logo,
 		config.Server.Port,
@@ -57,7 +69,7 @@ func Start(config *config.Config) {
 		log.Fatalf(err.Msg+" %v", err.Error)
 	}
 
-	log.Println("List loaded successfully")
+	log.Println("List loaded successfully with " + strconv.Itoa(db.ChannelsLen()) + " url(s)")
 
 	// Setting up signal capturing
 	stop := make(chan os.Signal, 1)
@@ -76,4 +88,13 @@ func Start(config *config.Config) {
 func register(mux *mux.Router, config *config.Config, route func(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request))) {
 	path, handler := route(config)
 	mux.HandleFunc(path, handler)
+}
+
+func simpleMw(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Do stuff here
+		log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		// Call the next handler, which can be another middleware in the chain, or the final handler.
+		next.ServeHTTP(w, r)
+	})
 }

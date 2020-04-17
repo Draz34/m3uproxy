@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"strconv"
 )
@@ -20,8 +19,6 @@ func NewChannel(channelAddr string) (*Channel, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error parsing url: %s", channelAddr)
 	}
-
-	log.Printf(strconv.Itoa(len(channelsDB)))
 
 	return &Channel{
 		Id:     strconv.Itoa(len(channelsDB)), // extract only the channel_id
@@ -49,4 +46,8 @@ func LookupChannel(id string) (channel *Channel, err error) {
 		err = fmt.Errorf("No channel available with id: %s ", id)
 	}
 	return
+}
+
+func ChannelsLen() int {
+	return len(channelsDB)
 }
