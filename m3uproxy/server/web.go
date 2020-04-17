@@ -45,6 +45,7 @@ func Start(config *config.Config) {
 	register(muxRouter, config, routes.ChannelRoute)
 	register(muxRouter, config, routes.ChannelInfoRoute)
 	register(muxRouter, config, routes.PanelApiRoute)
+	register(muxRouter, config, routes.LiveRoute)
 
 	//Log not found routes
 	//muxRouter.NotFoundHandler = muxRouter.NewRoute().HandlerFunc(http.NotFound).GetHandler()
