@@ -1,4 +1,6 @@
 github.com/Draz34/m3uproxy v0.0.0-20200416103904-4785ed97d062 h1:aT64cg2xlpw7eef5u8qOh7W6INGLRvvquzeXb+LHgTU=
+github.com/go-httpproxy/httpproxy v0.0.0-20180417134941-6977c68bf38e h1:ZWrG9Qs9xKF9638OVBT9Dd84CduxRWKX1/ZuwDI9e5o=
+github.com/go-httpproxy/httpproxy v0.0.0-20180417134941-6977c68bf38e/go.mod h1:Ftx0ecWwj8tX+5XPIE2KldKlneCsk9xMEaVpNbFRSt4=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

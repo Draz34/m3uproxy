@@ -1,17 +1,26 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
 	Server struct {
 		Port     uint16
 		Hostname string
+	}
+
+	Xtream struct {
+		Port     uint16
+		Hostname string
+		Surname  string
+		Username string
+		Password string
 	}
 
 	M3u struct {

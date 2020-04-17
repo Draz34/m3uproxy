@@ -28,6 +28,12 @@ is accepting requests in port :%d
 * http://127.0.0.1:%d
 * http://%s:%d
 
+xtream config :
+* url : http://%s:%d
+* surname : %s
+* username : %s
+* password : %s
+
 `
 
 func Start(config *config.Config) {
@@ -38,6 +44,7 @@ func Start(config *config.Config) {
 	register(muxRouter, config, routes.ChannelListRouter)
 	register(muxRouter, config, routes.ChannelRoute)
 	register(muxRouter, config, routes.ChannelInfoRoute)
+	register(muxRouter, config, routes.PanelApiRoute)
 
 	//Log not found routes
 	//muxRouter.NotFoundHandler = muxRouter.NewRoute().HandlerFunc(http.NotFound).GetHandler()
@@ -54,7 +61,12 @@ func Start(config *config.Config) {
 		config.Server.Port,
 		config.Server.Port,
 		config.Server.Hostname,
-		config.Server.Port)
+		config.Server.Port,
+		config.Xtream.Hostname,
+		config.Xtream.Port,
+		config.Xtream.Surname,
+		config.Xtream.Username,
+		config.Xtream.Password)
 
 	server := &http.Server{Addr: fmt.Sprintf(":%d", config.Server.Port), Handler: muxRouter}
 
