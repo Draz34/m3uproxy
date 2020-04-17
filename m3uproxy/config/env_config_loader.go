@@ -66,7 +66,7 @@ func LoadEnv() *Config {
 
 	envXtreamUsername := os.Getenv(M3uProxyXtremUsername)
 	if envXtreamUsername != "" {
-		config.Xtream.Username = envXtreamHostname
+		config.Xtream.Username = envXtreamUsername
 	}
 
 	envXtreamPassword := os.Getenv(M3uProxyXtremPassword)
