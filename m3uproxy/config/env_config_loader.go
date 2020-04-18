@@ -13,6 +13,7 @@ const (
 	M3uProxyXtremHostname = "M3U_PROXY_XTREAM_HOSTNAME"
 	M3uProxyXtremUsername = "M3U_PROXY_XTREAM_USERNAME"
 	M3uProxyXtremPassword = "M3U_PROXY_XTREAM_PASSWORD"
+	M3uProxyXtremVersion  = "M3U_PROXY_XTREAM_VERSION"
 	M3uProxyM3uUrl        = "M3U_PROXY_CHANNELS_URL"
 )
 
@@ -26,6 +27,7 @@ func LoadEnv() *Config {
 	config.Xtream.Hostname = "10.10.10.10"
 	config.Xtream.Username = "root"
 	config.Xtream.Password = "password"
+	config.Xtream.Version = 1.0
 
 	port := os.Getenv(M3uProxyPort)
 	if port != "" {
@@ -65,6 +67,16 @@ func LoadEnv() *Config {
 	envXtreamPassword := os.Getenv(M3uProxyXtremPassword)
 	if envXtreamPassword != "" {
 		config.Xtream.Password = envXtreamPassword
+	}
+
+	XtreamVersion := os.Getenv(M3uProxyXtremPort)
+	if XtreamVersion != "" {
+		envXtreamVersion, err := strconv.ParseFloat(XtreamVersion, 32)
+		if err != nil {
+			log.Fatalf("Error parsing server version number: %s", XtreamVersion)
+		}
+
+		config.Xtream.Version = float32(envXtreamVersion)
 	}
 
 	config.M3u.Url = os.Getenv(M3uProxyM3uUrl)

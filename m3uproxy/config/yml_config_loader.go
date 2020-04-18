@@ -20,6 +20,7 @@ type Config struct {
 		Hostname string
 		Username string
 		Password string
+		Version  float32
 	}
 
 	M3u struct {

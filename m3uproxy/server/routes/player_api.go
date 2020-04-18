@@ -13,27 +13,27 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-func PanelApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
+func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 
-	return "/panel_api.php", func(w http.ResponseWriter, r *http.Request) {
+	return "/player_api.php", func(w http.ResponseWriter, r *http.Request) {
 
 		if err := r.ParseForm(); err != nil {
 			fmt.Printf("ParseForm() err: %v", err)
 			return
 		}
 		Action := r.FormValue("action")
-		streamNum := r.FormValue("stream_id")
-		fromNow := r.FormValue("from_now")
+		serieNum := r.FormValue("series_id")
+		vodNum := r.FormValue("vod_id")
 
 		formData := url.Values{
 			"username":  {config.Xtream.Username},
 			"password":  {config.Xtream.Password},
 			"action":    {Action},
-			"stream_id": {streamNum},
-			"from_now":  {fromNow},
+			"series_id": {serieNum},
+			"vod_id":    {vodNum},
 		}
 
-		urlString := "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/panel_api.php"
+		urlString := "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/player_api.php"
 
 		resp, err := http.PostForm(urlString, formData)
 		if err != nil {
@@ -52,7 +52,7 @@ func PanelApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 
 		urlRequest := urlString
 		if Action != "" {
-			urlRequest = urlString + "?action=" + Action + "&stream_id=" + streamNum + "&from_now=" + fromNow
+			urlRequest = urlString + "?action=" + Action + "&series_id=" + serieNum + "&vod_id=" + vodNum
 		} else {
 			//fix json errors
 			var re = regexp.MustCompile(`"(.*)": ([^"].*),`)
