@@ -30,7 +30,6 @@ is accepting requests in port :%d
 
 xtream config :
 * url : http://%s:%d
-* surname : %s
 * username : %s
 * password : %s
 
@@ -65,7 +64,6 @@ func Start(config *config.Config) {
 		config.Server.Port,
 		config.Xtream.Hostname,
 		config.Xtream.Port,
-		config.Xtream.Surname,
 		config.Xtream.Username,
 		config.Xtream.Password)
 

@@ -11,7 +11,6 @@ const (
 	M3uProxyHostname      = "M3U_PROXY_HOSTNAME"
 	M3uProxyXtremPort     = "M3U_PROXY_XTREAM_PORT"
 	M3uProxyXtremHostname = "M3U_PROXY_XTREAM_HOSTNAME"
-	M3uProxyXtremSurname  = "M3U_PROXY_XTREAM_SURNAME"
 	M3uProxyXtremUsername = "M3U_PROXY_XTREAM_USERNAME"
 	M3uProxyXtremPassword = "M3U_PROXY_XTREAM_PASSWORD"
 	M3uProxyM3uUrl        = "M3U_PROXY_CHANNELS_URL"
@@ -25,7 +24,6 @@ func LoadEnv() *Config {
 
 	config.Xtream.Port = 7713
 	config.Xtream.Hostname = "10.10.10.10"
-	config.Xtream.Surname = "toto"
 	config.Xtream.Username = "root"
 	config.Xtream.Password = "password"
 
@@ -57,11 +55,6 @@ func LoadEnv() *Config {
 	envXtreamHostname := os.Getenv(M3uProxyXtremHostname)
 	if envXtreamHostname != "" {
 		config.Xtream.Hostname = envXtreamHostname
-	}
-
-	envXtreamSurname := os.Getenv(M3uProxyXtremSurname)
-	if envXtreamSurname != "" {
-		config.Xtream.Surname = envXtreamSurname
 	}
 
 	envXtreamUsername := os.Getenv(M3uProxyXtremUsername)

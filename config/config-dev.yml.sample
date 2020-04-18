@@ -5,7 +5,6 @@ server:
 xtream:
   port: 7713
   hostname: superiptv.com
-  surname: Toto
   username: root
   password: password
 

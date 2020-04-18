@@ -18,7 +18,6 @@ func PanelApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 	return "/panel_api.php", func(w http.ResponseWriter, r *http.Request) {
 
 		formData := url.Values{
-			"surname":  {config.Xtream.Surname},
 			"username": {config.Xtream.Username},
 			"password": {config.Xtream.Password},
 		}

@@ -18,7 +18,6 @@ type Config struct {
 	Xtream struct {
 		Port     uint16
 		Hostname string
-		Surname  string
 		Username string
 		Password string
 	}
