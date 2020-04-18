@@ -43,9 +43,8 @@ func Start(config *config.Config) {
 	register(muxRouter, config, routes.ChannelListRouter)
 	register(muxRouter, config, routes.ChannelRoute)
 	register(muxRouter, config, routes.ChannelInfoRoute)
-	if config.Xtream.Version < 2.0 {
-		register(muxRouter, config, routes.PanelApiRoute)
-	} else {
+	register(muxRouter, config, routes.PanelApiRoute)
+	if config.Xtream.Version >= 2.0 {
 		register(muxRouter, config, routes.PlayerApiRoute)
 	}
 	register(muxRouter, config, routes.LiveRoute)
