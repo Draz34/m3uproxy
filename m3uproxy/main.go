@@ -5,6 +5,8 @@ import (
 
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/server"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
