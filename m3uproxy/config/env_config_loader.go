@@ -9,6 +9,8 @@ import (
 const (
 	M3uProxyPort          = "M3U_PROXY_PORT"
 	M3uProxyHostname      = "M3U_PROXY_HOSTNAME"
+	M3uProxyAdminLogin    = "M3U_PROXY_ADMIN_LOGIN"
+	M3uProxyAdminPassword = "M3U_PROXY_ADMIN_PASSWORD"
 	M3uProxyXtremPort     = "M3U_PROXY_XTREAM_PORT"
 	M3uProxyXtremHostname = "M3U_PROXY_XTREAM_HOSTNAME"
 	M3uProxyXtremUsername = "M3U_PROXY_XTREAM_USERNAME"
@@ -22,6 +24,8 @@ func LoadEnv() *Config {
 
 	config.Server.Port = 9090
 	config.Server.Hostname = "localhost"
+	config.Server.AdminLogin = "root"
+	config.Server.AdminPassword = "password"
 
 	config.Xtream.Port = 7713
 	config.Xtream.Hostname = "10.10.10.10"
@@ -42,6 +46,16 @@ func LoadEnv() *Config {
 	envHostname := os.Getenv(M3uProxyHostname)
 	if envHostname != "" {
 		config.Server.Hostname = envHostname
+	}
+
+	envAdminLogin := os.Getenv(M3uProxyAdminLogin)
+	if envAdminLogin != "" {
+		config.Server.AdminLogin = envAdminLogin
+	}
+
+	envAdminPassword := os.Getenv(M3uProxyAdminPassword)
+	if envAdminPassword != "" {
+		config.Server.AdminPassword = envAdminPassword
 	}
 
 	XtreamPort := os.Getenv(M3uProxyXtremPort)

@@ -11,8 +11,10 @@ import (
 
 type Config struct {
 	Server struct {
-		Port     uint16
-		Hostname string
+		Port          uint16
+		Hostname      string
+		AdminLogin    string
+		AdminPassword string
 	}
 
 	Xtream struct {
