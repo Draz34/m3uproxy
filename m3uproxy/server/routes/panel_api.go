@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/Draz34/m3uproxy/config"
-	"github.com/Draz34/sjson"
+	"github.com/tidwall/sjson"
 )
 
 func PanelApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
