@@ -69,7 +69,7 @@ func LoadEnv() *Config {
 		config.Xtream.Password = envXtreamPassword
 	}
 
-	XtreamVersion := os.Getenv(M3uProxyXtremPort)
+	XtreamVersion := os.Getenv(M3uProxyXtremVersion)
 	if XtreamVersion != "" {
 		envXtreamVersion, err := strconv.ParseFloat(XtreamVersion, 32)
 		if err != nil {
