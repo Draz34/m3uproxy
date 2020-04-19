@@ -5,38 +5,26 @@ ENTRYPOINT ["/usr/bin/entrypoint"]
 CMD ["/bin/s6-svscan", "/etc/s6"]
 
 ENV GOPATH /srv/app
-ENV GO15VENDOREXPERIMENT 1
-
 ENV PATH /srv/app/bin:/usr/local/go/bin:${PATH}
+ENV GO111MODULE auto
 
-ENV GOLANG_VERSION 1.10.4
-ENV GOLANG_TARBALL https://golang.org/dl/go$GOLANG_VERSION.src.tar.gz
+COPY ./overlay ./overlay-amd64 /
+COPY --from=download /tmp/upx /usr/bin/upx
 
 RUN apk update && \
   apk upgrade && \
-  apk add \
-    build-base \
-    git \
-    git-lfs \
-    mercurial \
-    bzr \
-    go && \
-  export \
-    GOROOT_BOOTSTRAP="$(go env GOROOT)" && \
-  curl -sLo - \
-    ${GOLANG_TARBALL} | tar -xzf - -C /usr/local && \
-  cd \
-    /usr/local/go/src && \
-  patch -p2 -i \
-    /tmp/default-buildmode-pie.patch && \
-  patch -p2 -i \
-    /tmp/set-external-linker.patch && \
-  bash \
-    make.bash && \
-  apk del \
-    go && \
-  rm -rf \
-    /var/cache/apk/*
+  apk add gcc musl-dev openssl openssh-client make git git-lfs mercurial go protoc protobuf-dev binutils-gold && \
+  export GOROOT_BOOTSTRAP="$(go env GOROOT)" && \
+  export GOOS="$(go env GOOS)" && \
+  export GOARCH="$(go env GOARCH)" && \
+  export GOHOSTOS="$(go env GOHOSTOS)" && \
+  export GOHOSTARCH="$(go env GOHOSTARCH)" && \
+  curl -sLo - https://golang.org/dl/go1.14.2.src.tar.gz | tar -xzf - -C /usr/local && \
+  cd /usr/local/go/src && \
+  bash make.bash && \
+  rm -rf /usr/local/go/pkg/bootstrap /usr/local/go/pkg/obj && \
+  apk del go && \
+  rm -rf /var/cache/apk/*
 
 
 
@@ -47,16 +35,3 @@ ADD . /app/
 WORKDIR /app/m3uproxy
 
 RUN go build -o main .
-
-
-ARG VERSION
-ARG BUILD_DATE
-ARG VCS_REF
-
-LABEL org.label-schema.version=$VERSION
-LABEL org.label-schema.build-date=$BUILD_DATE
-LABEL org.label-schema.vcs-ref=$VCS_REF
-LABEL org.label-schema.vcs-url="https://github.com/dockhippie/golang.git"
-LABEL org.label-schema.name="Golang"
-LABEL org.label-schema.vendor="Thomas Boerger"
-LABEL org.label-schema.schema-version="1.0"
