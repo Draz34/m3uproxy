@@ -4,10 +4,9 @@ import (
 	"flag"
 
 	"github.com/Draz34/m3uproxy/config"
-	"github.com/Draz34/m3uproxy/db"
 	"github.com/Draz34/m3uproxy/server"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {
@@ -23,7 +22,7 @@ func main() {
 	} else {
 		m3uServerConfig = config.LoadEnv()
 	}
-	db.Test()
+
 	config.Validate(m3uServerConfig)
 	server.Start(m3uServerConfig)
 }

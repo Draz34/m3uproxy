@@ -9,11 +9,24 @@ import (
 	"strings"
 
 	"github.com/Draz34/m3uproxy/config"
+	"github.com/Draz34/m3uproxy/db"
 )
 
 func XmltvRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 
 	return "/xmltv.php", func(w http.ResponseWriter, r *http.Request) {
+
+		if err := r.ParseForm(); err != nil {
+			fmt.Printf("ParseForm() err: %v", err)
+			return
+		}
+		username := r.FormValue("username")
+		password := r.FormValue("password")
+
+		if db.GetUser(username, password).ID <= 0 {
+			w.WriteHeader(401)
+			return
+		}
 
 		formData := url.Values{
 			"username": {config.Xtream.Username},

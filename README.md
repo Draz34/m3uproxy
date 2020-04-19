@@ -19,28 +19,28 @@ $> curl http://${host}:${port}/ping
 pong
 ```
 
-* GET /channels
+* GET /channels/{username}/{password}
 ```bash
-$> curl http://localhost:9090/channels
+$> curl http://localhost:9090/channels/{username}/{password}
 
 #EXTM3U
 #EXTINF:-1 tvg-id="ABC FHD" tvg-name="ABC FHD" tvg-logo="http://....png" group-title="group A"
-http://localhost:9090/channels/5287
+http://localhost:9090/channels/{username}/{password}/5287
 #EXTINF:-1 tvg-id="ABC HD" tvg-name="ABC HD" tvg-logo="http://....png" group-title="group A"
-http://localhost:9090/channels/984
+http://localhost:9090/channels/{username}/{password}/984
 ...
 ```
 
-* GET /channels/{id}
+* GET /channels/{username}/{password}/{id}
 ```bash
-$> curl http://localhost:9090/channels/984
+$> curl http://localhost:9090/channels/{username}/{password}/984
 
 ... stream ...
 ```
 
-* GET /channels/info/{id}
+* GET /channels/{username}/{password}/info/{id}
 ```bash
-$> curl http://localhost:9090/channels/info/984
+$> curl http://localhost:9090/channels/{username}/{password}/info/984
 
 {
     Id: "984",

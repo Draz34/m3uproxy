@@ -9,9 +9,10 @@ import (
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/db"
 	"github.com/Draz34/m3uproxy/server/webutils"
+	"github.com/gorilla/mux"
 )
 
-const UriChannelList = "/channels"
+const UriChannelList = "/channels/{username}/{password}"
 
 type LoadingChannelsError struct {
 	Msg    string
@@ -21,6 +22,16 @@ type LoadingChannelsError struct {
 
 func ChannelListRouter(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 	return UriChannelList, func(w http.ResponseWriter, r *http.Request) {
+
+		vars := mux.Vars(r)
+		username := vars["username"]
+		password := vars["password"]
+
+		if db.GetUser(username, password).ID <= 0 {
+			w.WriteHeader(401)
+			return
+		}
+
 		bytes, err := LoadList(config)
 
 		if err != nil {

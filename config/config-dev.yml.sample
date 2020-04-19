@@ -12,4 +12,4 @@ xtream:
   version: 2.0
 
 m3u:
-  url: http://m3u.test/channels.m3u
+  url: http://m3u.test/channels/.m3u

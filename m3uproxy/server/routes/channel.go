@@ -20,13 +20,20 @@ const HeaderRange = "Range"
 func ChannelRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 	var responseModifier = GetResponseModifier(config)
 
-	return "/channels/{id}", func(w http.ResponseWriter, r *http.Request) {
+	return "/channels/{username}/{password}/{id}", func(w http.ResponseWriter, r *http.Request) {
 
 		var channelAddr *db.Channel
 		var err error
 
 		vars := mux.Vars(r)
 		channelId := vars["id"]
+		username := vars["username"]
+		password := vars["password"]
+
+		if db.GetUser(username, password).ID <= 0 {
+			w.WriteHeader(401)
+			return
+		}
 
 		// Decide if we want to lookup from the database
 		// or use the url provided in the request query parameter
@@ -105,10 +112,10 @@ func GetResponseModifier(config *config.Config) func(resp *http.Response) error 
 }
 
 // The return should match the previous route pattern.
-// Http://host:port/channels/channelId
+// Http://host:port/channels/{username}/{password}/channelId
 func GetChannelUrl(config *config.Config, id string) string {
 	return fmt.Sprintf(
-		"http://%s:%d/channels/%s",
+		"http://%s:%d/channels/{username}/{password}/%s",
 		config.Server.Hostname,
 		config.Server.Port,
 		id,

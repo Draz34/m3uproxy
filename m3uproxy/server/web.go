@@ -87,6 +87,8 @@ func Start(config *config.Config) {
 		}
 	}()
 
+	db.Init()
+
 	_, err := routes.LoadList(config)
 	if routes.LoadList(config); err != nil {
 		log.Fatalf(err.Msg+" %v", err.Error)
