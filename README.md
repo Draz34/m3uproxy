@@ -85,6 +85,21 @@ go run m3uproxy/main.go
 
 #or 
 
-docker run -d -e M3U_PROXY_CHANNELS_URL="<valid url to m3u list>" -p 9090:9090 draz34/m3uproxy:latest
+docker run -d \
+--name m3uproxy \
+-p 9090:9090 \
+-v /data/m3uproxy/db:/var/lib/mysql \
+-e WEBROOT=/srv/www \
+-e MARIADB_ROOT_PASSWORD="root" \
+-e M3U_PROXY_HOSTNAME="{my.proxy.com}" \
+-e M3U_PROXY_XTREAM_PORT="{7713}" \
+-e M3U_PROXY_ADMIN_LOGIN="{my_admin_login}" \
+-e M3U_PROXY_ADMIN_PASSWORD="{my_admin_password}" \
+-e M3U_PROXY_XTREAM_HOSTNAME="{iptv.server.com}" \
+-e M3U_PROXY_XTREAM_USERNAME="{User}" \
+-e M3U_PROXY_XTREAM_PASSWORD="{Password}" \
+-e M3U_PROXY_XTREAM_VERSION="2.0" \
+-e M3U_PROXY_CHANNELS_URL="{http://iptv.server.com/file.m3u}" \
+draz34/m3uproxy:xtream-codes-api
  
 ```
