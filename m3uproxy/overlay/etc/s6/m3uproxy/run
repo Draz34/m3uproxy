@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "> vérification des services"
+wait-for-it localhost:3306 -t 300
+
+echo "> lancement du serveur"
+/app/m3uproxy/main
+
+/bin/s6-svc -d /etc/s6/m3uproxy
+exit 0

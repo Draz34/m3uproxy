@@ -30,6 +30,8 @@ RUN apk update && \
   rm -rf /var/cache/apk/*
 
 
+COPY ./overlay /
+RUN chmod -R +x /etc/s6/
 
 RUN mkdir /app
 
