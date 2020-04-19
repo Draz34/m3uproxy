@@ -11,10 +11,11 @@ import (
 
 func MovieRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 
-	return "/movie/{username}/{password}/{id}.mp4", func(w http.ResponseWriter, r *http.Request) {
+	return "/movie/{username}/{password}/{id}.{ext}", func(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
 		channelNumber := vars["id"]
+		ext := vars["ext"]
 		username := vars["username"]
 		password := vars["password"]
 
@@ -23,6 +24,6 @@ func MovieRoute(config *config.Config) (string, func(w http.ResponseWriter, r *h
 			return
 		}
 
-		http.Redirect(w, r, "http://"+config.Server.Hostname+":"+strconv.Itoa(int(config.Server.Port))+"/channels/"+username+"/"+password+"/"+channelNumber+"?location=http%3A%2F%2F"+config.Xtream.Hostname+"%3A"+strconv.Itoa(int(config.Xtream.Port))+"%2Fmovie%2F"+config.Xtream.Username+"%2F"+config.Xtream.Password+"%2F"+channelNumber+".mp4", 301)
+		http.Redirect(w, r, "http://"+config.Server.Hostname+":"+strconv.Itoa(int(config.Server.Port))+"/channels/"+username+"/"+password+"/"+channelNumber+"?location=http%3A%2F%2F"+config.Xtream.Hostname+"%3A"+strconv.Itoa(int(config.Xtream.Port))+"%2Fmovie%2F"+config.Xtream.Username+"%2F"+config.Xtream.Password+"%2F"+channelNumber+"."+ext, 301)
 	}
 }

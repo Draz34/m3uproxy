@@ -11,10 +11,11 @@ import (
 
 func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 
-	return "/series/{username}/{password}/{id}.mkv", func(w http.ResponseWriter, r *http.Request) {
+	return "/series/{username}/{password}/{id}.{ext}", func(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
 		channelNumber := vars["id"]
+		ext := vars["ext"]
 		username := vars["username"]
 		password := vars["password"]
 
@@ -23,6 +24,6 @@ func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *
 			return
 		}
 
-		http.Redirect(w, r, "http://"+config.Server.Hostname+":"+strconv.Itoa(int(config.Server.Port))+"/channels/"+username+"/"+password+"/"+channelNumber+"?location=http%3A%2F%2F"+config.Xtream.Hostname+"%3A"+strconv.Itoa(int(config.Xtream.Port))+"%2Fseries%2F"+config.Xtream.Username+"%2F"+config.Xtream.Password+"%2F"+channelNumber+".mkv", 301)
+		http.Redirect(w, r, "http://"+config.Server.Hostname+":"+strconv.Itoa(int(config.Server.Port))+"/channels/"+username+"/"+password+"/"+channelNumber+"?location=http%3A%2F%2F"+config.Xtream.Hostname+"%3A"+strconv.Itoa(int(config.Xtream.Port))+"%2Fseries%2F"+config.Xtream.Username+"%2F"+config.Xtream.Password+"%2F"+channelNumber+"."+ext, 301)
 	}
 }
