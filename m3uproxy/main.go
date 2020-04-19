@@ -5,6 +5,8 @@ import (
 
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/server"
+
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {

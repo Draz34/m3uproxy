@@ -27,6 +27,13 @@ ___  ___ _____ _   _     ____________ _______   ____   __
 is accepting requests in port :%d
 * http://127.0.0.1:%d
 * http://%s:%d
+* admin login : %s
+* admin password : %s
+
+xtream config version %.1f :
+* url : http://%s:%d
+* username : %s
+* password : %s
 
 `
 
@@ -38,6 +45,15 @@ func Start(config *config.Config) {
 	register(muxRouter, config, routes.ChannelListRouter)
 	register(muxRouter, config, routes.ChannelRoute)
 	register(muxRouter, config, routes.ChannelInfoRoute)
+	register(muxRouter, config, routes.PanelApiRoute)
+	if config.Xtream.Version >= 2.0 {
+		register(muxRouter, config, routes.PlayerApiRoute)
+	}
+	register(muxRouter, config, routes.LiveRoute)
+	register(muxRouter, config, routes.MovieRoute)
+	register(muxRouter, config, routes.SeriesRoute)
+	register(muxRouter, config, routes.XmltvRoute)
+	register(muxRouter, config, routes.AdminApiRoute)
 
 	//Log not found routes
 	//muxRouter.NotFoundHandler = muxRouter.NewRoute().HandlerFunc(http.NotFound).GetHandler()
@@ -54,7 +70,14 @@ func Start(config *config.Config) {
 		config.Server.Port,
 		config.Server.Port,
 		config.Server.Hostname,
-		config.Server.Port)
+		config.Server.Port,
+		config.Server.AdminLogin,
+		config.Server.AdminPassword,
+		config.Xtream.Version,
+		config.Xtream.Hostname,
+		config.Xtream.Port,
+		config.Xtream.Username,
+		config.Xtream.Password)
 
 	server := &http.Server{Addr: fmt.Sprintf(":%d", config.Server.Port), Handler: muxRouter}
 
@@ -63,6 +86,8 @@ func Start(config *config.Config) {
 			//log.Fatalf("Error starting server: %v", err)
 		}
 	}()
+
+	db.Init()
 
 	_, err := routes.LoadList(config)
 	if routes.LoadList(config); err != nil {

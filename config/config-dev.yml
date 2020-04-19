@@ -1,6 +1,0 @@
-server:
-  port: 9090
-  hostname: 192.168.0.50
-
-m3u:
-  url: http://m3u.test/channels.m3u

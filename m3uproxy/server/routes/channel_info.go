@@ -11,9 +11,16 @@ import (
 )
 
 func ChannelInfoRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
-	return "/channels/info/{id}", func(w http.ResponseWriter, r *http.Request) {
+	return "/channels/{username}/{password}/info/{id}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		channelId := vars["id"]
+		username := vars["username"]
+		password := vars["password"]
+
+		if db.GetUser(username, password).ID <= 0 {
+			w.WriteHeader(401)
+			return
+		}
 
 		channel, err := db.LookupChannel(channelId)
 		if err != nil {
