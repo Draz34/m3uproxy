@@ -8,7 +8,6 @@ ENV GOPATH /srv/app
 ENV PATH /srv/app/bin:/usr/local/go/bin:${PATH}
 ENV GO111MODULE auto
 
-COPY ./overlay ./overlay-amd64 /
 COPY --from=download /tmp/upx /usr/bin/upx
 
 RUN apk update && \
