@@ -100,6 +100,6 @@ docker run -d \
 -e M3U_PROXY_XTREAM_PASSWORD="{Password}" \
 -e M3U_PROXY_XTREAM_VERSION="2.0" \
 -e M3U_PROXY_CHANNELS_URL="{http://iptv.server.com/file.m3u}" \
-draz34/m3uproxy:xtream-codes-api
+draz34/m3uproxy:latest
  
 ```
