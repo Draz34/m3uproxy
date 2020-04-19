@@ -8,7 +8,9 @@ ENV GOPATH /srv/app
 ENV PATH /srv/app/bin:/usr/local/go/bin:${PATH}
 ENV GO111MODULE auto
 
-COPY --from=download /tmp/upx /usr/bin/upx
+RUN cd /tmp && \
+  curl -sSL -o upx.tar.xz https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz && \
+  tar -xvf upx.tar.xz --strip-components=1
 
 RUN apk update && \
   apk upgrade && \
