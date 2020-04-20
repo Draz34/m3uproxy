@@ -64,8 +64,10 @@ func TracingRedirect(myURL string) {
 
 		resp, err := client.Get(nextURL)
 
+		responseOk := false
 		if err != nil {
 			//fmt.Println(err)
+			responseOk = true
 		}
 
 		uHost, _ := url.Parse(nextURL)
@@ -94,17 +96,21 @@ func TracingRedirect(myURL string) {
 			Url:      uHost.String(),
 		}
 
-		db.CreateXtreamProxy(p)
+		if uHost.String() != "" {
+			db.CreateXtreamProxy(p)
+		}
 
-		if resp.StatusCode == 200 {
-			fmt.Println("Done!")
-			break
-		} else {
-			fmt.Println("StatusCode:", resp.StatusCode)
-			fmt.Println(resp.Request.URL)
+		nextURL = resp.Header.Get("Location")
+		i += 1
 
-			nextURL = resp.Header.Get("Location")
-			i += 1
+		if responseOk {
+			if resp.StatusCode == 200 {
+				fmt.Println("Done!")
+				break
+			} else {
+				fmt.Println("StatusCode:", resp.StatusCode)
+				fmt.Println(resp.Request.URL)
+			}
 		}
 	}
 }
