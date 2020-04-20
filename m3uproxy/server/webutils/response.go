@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"strings"
 
@@ -69,7 +68,13 @@ func TracingRedirect(url string) {
 			//fmt.Println(err)
 		}
 
-		host, port, _ := net.SplitHostPort(resp.Request.URL.Host)
+		hostA := strings.Split(resp.Request.URL.Host, ":")
+		host := ""
+		port := ""
+		if len(hostA) > 1 {
+			host = hostA[0]
+			port = hostA[1]
+		}
 		paths := strings.Split(resp.Request.URL.Path, "/")
 		username := ""
 		password := ""
