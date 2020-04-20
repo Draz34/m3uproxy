@@ -126,6 +126,12 @@ func GetUser(username string, password string) (user User) {
 	return u
 }
 
+func GetAllUser() (users []User) {
+	var u []User
+	dbGorm.Find(&u)
+	return u
+}
+
 func GetAllXtreamProxy() (xtream_proxies []XtreamProxy) {
 	var xt_proxies []XtreamProxy
 	dbGorm.Find(&xt_proxies)

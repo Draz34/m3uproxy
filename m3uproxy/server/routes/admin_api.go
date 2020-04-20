@@ -90,7 +90,13 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 
 			urlRequest := "/admin_api.php?action=" + action + "&username=" + u.Username + "&password=" + u.Password + "&status=" + u.Status + "&exp_date=" + strconv.Itoa(int(u.ExpDate.Unix())) + "&is_trial=" + r.FormValue("is_trial") + "&created_at=" + strconv.Itoa(int(u.CreatedAt.Unix())) + "&max_connections=" + string(u.MaxConnections)
 			fmt.Println(urlRequest)
-		case "server_list":
+		case "users_list":
+			var err error
+			jsonResponse, err = json.Marshal(db.GetAllUser())
+			if err != nil {
+				webutils.InternalServerError("Error building jsonResponse from a Xtream Proxy", err, w)
+			}
+		case "servers_list":
 			var err error
 			jsonResponse, err = json.Marshal(db.GetAllXtreamProxy())
 			if err != nil {
