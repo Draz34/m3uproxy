@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/Draz34/m3uproxy/db"
@@ -52,8 +53,7 @@ func writePayload(payload []byte, w http.ResponseWriter, isError bool) {
 	}
 }
 
-func TracingRedirect(url string) {
-	myURL := url
+func TracingRedirect(myURL string) {
 	nextURL := myURL
 	var i int
 	for i < 100 {
@@ -68,14 +68,16 @@ func TracingRedirect(url string) {
 			//fmt.Println(err)
 		}
 
-		hostA := strings.Split(resp.Request.URL.Host, ":")
+		uHost, _ := url.Parse(nextURL)
+
+		hostA := strings.Split(uHost.Host, ":")
 		host := ""
 		port := ""
 		if len(hostA) > 1 {
 			host = hostA[0]
 			port = hostA[1]
 		}
-		paths := strings.Split(resp.Request.URL.Path, "/")
+		paths := strings.Split(uHost.Path, "/")
 		username := ""
 		password := ""
 		if len(paths) > 2 {
@@ -89,7 +91,7 @@ func TracingRedirect(url string) {
 			Username: username,
 			Password: password,
 			Md5:      GetMD5Hash(host + port + username + password),
-			Url:      resp.Request.URL.String(),
+			Url:      uHost.String(),
 		}
 
 		db.CreateXtreamProxy(p)
