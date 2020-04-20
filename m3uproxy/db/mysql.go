@@ -22,6 +22,16 @@ type User struct {
 	MaxConnections int
 }
 
+type XtreamProxy struct {
+	ID       int
+	Domain   string
+	Port     string
+	Username string
+	Password string
+	Md5      string
+	Url      string
+}
+
 // init database
 func Init() {
 	var err error
@@ -73,7 +83,20 @@ func createTable() {
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		fmt.Println("Table created successfully..")
+		fmt.Println("Table users created successfully..")
+	}
+
+	stmt, err = db.Prepare("CREATE TABLE IF NOT EXISTS `xtream_proxies` ( `id` INT NOT NULL AUTO_INCREMENT , `domain` VARCHAR(50) NOT NULL , `port` VARCHAR(6) NOT NULL , `username` VARCHAR(50) NOT NULL , `password` VARCHAR(50) NOT NULL , `md5` VARCHAR(50) NOT NULL , `lives_count` INT NULL , `movies_count` INT NULL , `series_count` INT NULL , `version` VARCHAR(15) NULL, `url` TEXT NULL , PRIMARY KEY (`id`), INDEX (`domain`), INDEX (`port`), INDEX (`md5`)) ENGINE = InnoDB;")
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	_, err = stmt.Exec()
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println("Table xtream_proxies created successfully..")
 	}
 
 	dbGorm, err = gorm.Open("mysql", "root:root@tcp(127.0.0.1:3306)/m3uproxy?charset=utf8&parseTime=True&loc=Local")
@@ -85,11 +108,28 @@ func CreateUser(u User) {
 	dbGorm.Create(&u)
 }
 
+func CreateXtreamProxy(p XtreamProxy) {
+	var px XtreamProxy
+	dbGorm.Where("md5 = ?", p.Md5).Find(&px)
+
+	if px.ID <= 0 {
+		dbGorm.NewRecord(p)
+		dbGorm.Create(&p)
+	}
+
+}
+
 func GetUser(username string, password string) (user User) {
 	var u User
 	dbGorm.Where("username = ? AND password = ?", username, password).Find(&u)
 	//fmt.Println(u)
 	return u
+}
+
+func GetAllXtreamProxy() (xtream_proxies []XtreamProxy) {
+	var xt_proxies []XtreamProxy
+	dbGorm.Find(&xt_proxies)
+	return xt_proxies
 }
 
 func Close() {

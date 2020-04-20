@@ -47,45 +47,56 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 
 		action := r.FormValue("action")
 
-		dateExp, err := time.Parse("2006-01-02 15:04:05", r.FormValue("exp_date"))
-		if err != nil {
-			fmt.Println(err.Error())
+		var jsonResponse []byte
+
+		switch action {
+		case "create_user":
+			dateExp, err := time.Parse("2006-01-02 15:04:05", r.FormValue("exp_date"))
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+
+			dateCrea, err := time.Parse("2006-01-02 15:04:05", r.FormValue("created_at"))
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+
+			isT, err := strconv.ParseBool(r.FormValue("is_trial"))
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+
+			maxCo, err := strconv.ParseInt(r.FormValue("max_connections"), 10, 32)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+
+			var u = db.User{
+				Username:       r.FormValue("username"),
+				Password:       r.FormValue("password"),
+				Status:         r.FormValue("status"),
+				ExpDate:        dateExp,
+				IsTrial:        isT,
+				CreatedAt:      dateCrea,
+				MaxConnections: int(maxCo),
+			}
+
+			db.CreateUser(u)
+
+			jsonResponse, err = json.Marshal(u)
+			if err != nil {
+				webutils.InternalServerError("Error building jsonResponse from a User", err, w)
+			}
+
+			urlRequest := "/admin_api.php?action=" + action + "&username=" + u.Username + "&password=" + u.Password + "&status=" + u.Status + "&exp_date=" + strconv.Itoa(int(u.ExpDate.Unix())) + "&is_trial=" + r.FormValue("is_trial") + "&created_at=" + strconv.Itoa(int(u.CreatedAt.Unix())) + "&max_connections=" + string(u.MaxConnections)
+			fmt.Println(urlRequest)
+		case "server_list":
+			var err error
+			jsonResponse, err = json.Marshal(db.GetAllXtreamProxy())
+			if err != nil {
+				webutils.InternalServerError("Error building jsonResponse from a Xtream Proxy", err, w)
+			}
 		}
-
-		dateCrea, err := time.Parse("2006-01-02 15:04:05", r.FormValue("created_at"))
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-
-		isT, err := strconv.ParseBool(r.FormValue("is_trial"))
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-
-		maxCo, err := strconv.ParseInt(r.FormValue("max_connections"), 10, 32)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-
-		var u = db.User{
-			Username:       r.FormValue("username"),
-			Password:       r.FormValue("password"),
-			Status:         r.FormValue("status"),
-			ExpDate:        dateExp,
-			IsTrial:        isT,
-			CreatedAt:      dateCrea,
-			MaxConnections: int(maxCo),
-		}
-
-		db.CreateUser(u)
-
-		jsonResponse, err := json.Marshal(u)
-		if err != nil {
-			webutils.InternalServerError("Error building jsonResponse from a User", err, w)
-		}
-
-		urlRequest := "/admin_api.php?action=" + action + "&username=" + u.Username + "&password=" + u.Password + "&status=" + u.Status + "&exp_date=" + strconv.Itoa(int(u.ExpDate.Unix())) + "&is_trial=" + r.FormValue("is_trial") + "&created_at=" + strconv.Itoa(int(u.CreatedAt.Unix())) + "&max_connections=" + string(u.MaxConnections)
-		fmt.Println(urlRequest)
 
 		w.Header().Set("Content-Type", "application/json")
 		webutils.Success(jsonResponse, w)

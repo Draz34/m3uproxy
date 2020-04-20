@@ -108,6 +108,7 @@ func GetResponseModifier(config *config.Config) func(resp *http.Response) error 
 			query.Set(QueryParamLocation, resp.Header.Get("Location"))
 
 			newReq.RawQuery = query.Encode()
+			log.Printf("new location : %s", newReq.String())
 			resp.Header.Set("Location", newReq.String())
 		}
 

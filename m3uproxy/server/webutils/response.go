@@ -1,8 +1,15 @@
 package webutils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"strings"
+
+	"github.com/Draz34/m3uproxy/db"
 )
 
 func Success(b []byte, w http.ResponseWriter) {
@@ -44,4 +51,59 @@ func writePayload(payload []byte, w http.ResponseWriter, isError bool) {
 	if err != nil {
 		log.Printf("Error writing content to http.ResponseWriter: payload=%s, err=%v", payload, err)
 	}
+}
+
+func TracingRedirect(url string) {
+	myURL := url
+	nextURL := myURL
+	var i int
+	for i < 100 {
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			}}
+
+		resp, err := client.Get(nextURL)
+
+		if err != nil {
+			//fmt.Println(err)
+		}
+
+		host, port, _ := net.SplitHostPort(resp.Request.URL.Host)
+		paths := strings.Split(resp.Request.URL.Path, "/")
+		username := ""
+		password := ""
+		if len(paths) > 2 {
+			username = paths[2]
+			password = paths[3]
+		}
+
+		var p = db.XtreamProxy{
+			Domain:   host,
+			Port:     port,
+			Username: username,
+			Password: password,
+			Md5:      GetMD5Hash(host + port + username + password),
+			Url:      resp.Request.URL.String(),
+		}
+
+		db.CreateXtreamProxy(p)
+
+		if resp.StatusCode == 200 {
+			fmt.Println("Done!")
+			break
+		} else {
+			fmt.Println("StatusCode:", resp.StatusCode)
+			fmt.Println(resp.Request.URL)
+
+			nextURL = resp.Header.Get("Location")
+			i += 1
+		}
+	}
+}
+
+func GetMD5Hash(text string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
