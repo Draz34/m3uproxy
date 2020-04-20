@@ -54,6 +54,7 @@ func writePayload(payload []byte, w http.ResponseWriter, isError bool) {
 }
 
 func TracingRedirect(myURL string) {
+	return
 	nextURL := myURL
 	var i int
 	for i < 100 {
