@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 	"net/url"
-	"strconv"
+	"strings"
 )
 
 type Channel struct {
@@ -20,8 +20,10 @@ func NewChannel(channelAddr string) (*Channel, error) {
 		return nil, fmt.Errorf("error parsing url: %s", channelAddr)
 	}
 
+	path := urlChannel.Path
+
 	return &Channel{
-		Id:     strconv.Itoa(len(channelsDB)), // extract only the channel_id
+		Id:     path[strings.LastIndex(path, "/")+1:], // extract only the channel_id
 		Source: urlChannel,
 	}, nil
 }

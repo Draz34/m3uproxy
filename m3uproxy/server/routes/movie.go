@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -24,6 +25,17 @@ func MovieRoute(config *config.Config) (string, func(w http.ResponseWriter, r *h
 			return
 		}
 
-		http.Redirect(w, r, "http://"+config.Server.Hostname+":"+strconv.Itoa(int(config.Server.Port))+"/channels/"+username+"/"+password+"/"+channelNumber+"?location=http%3A%2F%2F"+config.Xtream.Hostname+"%3A"+strconv.Itoa(int(config.Xtream.Port))+"%2Fmovie%2F"+config.Xtream.Username+"%2F"+config.Xtream.Password+"%2F"+channelNumber+"."+ext, 301)
+		channel, err := db.LookupChannel(channelNumber)
+		if err != nil {
+			urlIptv := "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/movie/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber + "." + ext
+			log.Printf("Register Channel for %s", urlIptv)
+			channel, _ = db.RegisterChannel(urlIptv)
+			log.Printf("%+v\n", channel)
+		}
+
+		redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id
+		log.Printf("Redirect to %s", redirectUrl)
+
+		http.Redirect(w, r, redirectUrl, 302)
 	}
 }

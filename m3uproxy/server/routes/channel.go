@@ -15,6 +15,8 @@ import (
 
 const QueryParamLocation = "location"
 const HeaderChannelId = "X-ChannelId"
+const HeaderUsername = "X-Username"
+const HeaderPassword = "X-Password"
 const HeaderRange = "Range"
 
 func ChannelRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
@@ -97,9 +99,11 @@ func GetResponseModifier(config *config.Config) func(resp *http.Response) error 
 			resp.StatusCode == http.StatusTemporaryRedirect
 
 		channelId := resp.Request.Header.Get(HeaderChannelId)
+		uName := resp.Request.Header.Get(HeaderUsername)
+		pwd := resp.Request.Header.Get(HeaderPassword)
 
-		if isRedirect && channelId != "" {
-			newReq, _ := url.Parse(GetChannelUrl(config, channelId))
+		if isRedirect && channelId != "" && uName != "" && pwd != "" {
+			newReq, _ := url.Parse(GetChannelUrl(config, channelId, uName, pwd))
 			query := newReq.Query()
 			query.Set(QueryParamLocation, resp.Header.Get("Location"))
 
@@ -113,11 +117,13 @@ func GetResponseModifier(config *config.Config) func(resp *http.Response) error 
 
 // The return should match the previous route pattern.
 // Http://host:port/channels/{username}/{password}/channelId
-func GetChannelUrl(config *config.Config, id string) string {
+func GetChannelUrl(config *config.Config, id string, username string, password string) string {
 	return fmt.Sprintf(
-		"http://%s:%d/channels/{username}/{password}/%s",
+		"http://%s:%d/channels/%s/%s/%s",
 		config.Server.Hostname,
 		config.Server.Port,
+		username,
+		password,
 		id,
 	)
 }

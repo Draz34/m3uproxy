@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -78,10 +79,15 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 
 		db.CreateUser(u)
 
+		jsonResponse, err := json.Marshal(u)
+		if err != nil {
+			webutils.InternalServerError("Error building jsonResponse from a User", err, w)
+		}
+
 		urlRequest := "/admin_api.php?action=" + action + "&username=" + u.Username + "&password=" + u.Password + "&status=" + u.Status + "&exp_date=" + strconv.Itoa(int(u.ExpDate.Unix())) + "&is_trial=" + r.FormValue("is_trial") + "&created_at=" + strconv.Itoa(int(u.CreatedAt.Unix())) + "&max_connections=" + string(u.MaxConnections)
 		fmt.Println(urlRequest)
 
 		w.Header().Set("Content-Type", "application/json")
-		webutils.Success([]byte(`[{"id":"1","username":"username1","credits":"0","group_id":"1","group_name":"Administrators","last_login":"1511883014","date_registered":"1421604973","email":"test1@my-email.com","ip":"8.8.8.8","status":"1"},{"id":"31","username":"username2","credits":"0","group_id":"1","group_name":"Administrators","last_login":"1539813642","date_registered":"1473632400","email":"test2@my-email.com","ip":"8.8.8.8","status":"1"}]`), w)
+		webutils.Success(jsonResponse, w)
 	}
 }
