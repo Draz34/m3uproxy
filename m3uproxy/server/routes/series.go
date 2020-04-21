@@ -27,8 +27,9 @@ func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *
 
 		channel, err := db.LookupChannel(channelNumber)
 		trackRedirects := false
+		var urlIptv string
 		if err != nil {
-			urlIptv := "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/series/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
+			urlIptv = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/series/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)
 			//log.Printf("%+v\n", channel)
@@ -41,7 +42,7 @@ func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *
 		log.Printf("Redirect to %s", redirectUrl)
 
 		if trackRedirects {
-			webutils.TracingRedirect(redirectUrl)
+			webutils.TracingRedirect(urlIptv)
 		}
 
 		http.Redirect(w, r, redirectUrl, 302)
