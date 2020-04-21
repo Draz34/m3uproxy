@@ -132,6 +132,7 @@ func Info(bd string) {
 func SendMail(from, subject, body string, to string) error {
 
 	r := strings.NewReplacer("\r\n", "", "\r", "", "\n", "", "%0a", "", "%0d", "")
+	r2 := strings.NewReplacer("\r\n", "<br/>", "\r", "<br/>", "\n", "<br/>", "%0a", "<br/>", "%0d", "<br/>")
 
 	hostFrom := strings.Split(from, "@")
 	hostTo := strings.Split(to, "@")
@@ -166,7 +167,7 @@ func SendMail(from, subject, body string, to string) error {
 		"Subject: " + subject + "\r\n" +
 		"Content-Type: text/html; charset=\"UTF-8\"\r\n" +
 		"Content-Transfer-Encoding: base64\r\n" +
-		"\r\n" + base64.StdEncoding.EncodeToString([]byte(body))
+		"\r\n" + base64.StdEncoding.EncodeToString([]byte(r2.Replace(body)))
 
 	_, err = w.Write([]byte(msg))
 	if err != nil {

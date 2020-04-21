@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -103,6 +104,19 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 			if err != nil {
 				webutils.InternalServerError("Error building jsonResponse from a Xtream Proxy", err, w)
 			}
+		case "servers_get":
+			id := r.FormValue("id")
+
+			proxy := db.GetXtreamProxy(id)
+			proxy.Version, proxy.LivesCount, proxy.MoviesCount, proxy.SeriesCount = getProxyInfos(proxy)
+			db.SaveXtreamProxy(proxy)
+
+			var err error
+			jsonResponse, err = json.Marshal(proxy)
+			if err != nil {
+				webutils.InternalServerError("Error building jsonResponse from a Xtream Proxy", err, w)
+			}
+
 		case "http_client":
 			method := r.FormValue("method")
 			url := r.FormValue("url")
@@ -156,4 +170,97 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 
 		webutils.Success(jsonResponse, w)
 	}
+}
+
+func getProxyInfos(proxy db.XtreamProxy) (version string, liveCount int, movieCount int, serieCount int) {
+	urlString := "http://" + proxy.Domain + ":" + proxy.Port + "/player_api.php"
+	urlString2 := "http://" + proxy.Domain + ":" + proxy.Port + "/panel_api.php"
+
+	//Lives
+	formData := url.Values{
+		"username": {proxy.Username},
+		"password": {proxy.Password},
+		"action":   {"get_live_streams"},
+	}
+
+	version = "2"
+	resp2, err := http.PostForm(urlString, formData)
+	if err != nil {
+		print(err)
+		urlString = urlString2
+		resp2, err = http.PostForm(urlString, formData)
+		if err != nil {
+			print(err)
+		}
+		version = "1"
+	}
+
+	defer resp2.Body.Close()
+	body2, err := ioutil.ReadAll(resp2.Body)
+	if err != nil {
+		print(err)
+	}
+
+	var jsonObjs interface{}
+	json.Unmarshal(body2, &jsonObjs)
+	objSlice, ok := jsonObjs.([]interface{})
+
+	if !ok {
+		fmt.Println("cannot convert the JSON objects")
+	}
+	liveCount = len(objSlice)
+
+	//Movies
+	formData = url.Values{
+		"username": {proxy.Username},
+		"password": {proxy.Password},
+		"action":   {"get_vod_streams"},
+	}
+
+	resp2, err = http.PostForm(urlString, formData)
+	if err != nil {
+		print(err)
+	}
+
+	defer resp2.Body.Close()
+	body2, err = ioutil.ReadAll(resp2.Body)
+	if err != nil {
+		print(err)
+	}
+
+	json.Unmarshal(body2, &jsonObjs)
+	objSlice, ok = jsonObjs.([]interface{})
+
+	if !ok {
+		fmt.Println("cannot convert the JSON objects")
+	}
+	movieCount = len(objSlice)
+
+	//Series
+	formData = url.Values{
+		"username": {proxy.Username},
+		"password": {proxy.Password},
+		"action":   {"get_series"},
+	}
+
+	resp2, err = http.PostForm(urlString, formData)
+	if err != nil {
+		print(err)
+	}
+
+	defer resp2.Body.Close()
+	body2, err = ioutil.ReadAll(resp2.Body)
+	if err != nil {
+		print(err)
+	}
+
+	json.Unmarshal(body2, &jsonObjs)
+	objSlice, ok = jsonObjs.([]interface{})
+
+	if !ok {
+		fmt.Println("cannot convert the JSON objects")
+	}
+	serieCount = len(objSlice)
+
+	return
 }

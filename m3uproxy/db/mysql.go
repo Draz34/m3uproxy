@@ -12,6 +12,7 @@ var db *sql.DB
 var dbGorm *gorm.DB
 
 type User struct {
+	gorm.Model
 	ID             int
 	Username       string
 	Password       string
@@ -23,13 +24,17 @@ type User struct {
 }
 
 type XtreamProxy struct {
-	ID       int
-	Domain   string
-	Port     string
-	Username string
-	Password string
-	Md5      string
-	Url      string
+	ID          int
+	Domain      string
+	Port        string
+	Username    string
+	Password    string
+	Md5         string
+	LivesCount  int
+	MoviesCount int
+	SeriesCount int
+	Version     string
+	Url         string
 }
 
 // init database
@@ -136,6 +141,17 @@ func GetAllXtreamProxy() (xtream_proxies []XtreamProxy) {
 	var xt_proxies []XtreamProxy
 	dbGorm.Find(&xt_proxies)
 	return xt_proxies
+}
+
+func GetXtreamProxy(id string) (proxy XtreamProxy) {
+	var d XtreamProxy
+	dbGorm.First(&d, id)
+	//fmt.Println(u)
+	return d
+}
+
+func SaveXtreamProxy(model XtreamProxy) {
+	dbGorm.Save(&model)
 }
 
 func Close() {
