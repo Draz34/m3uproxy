@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/mail"
 	"strconv"
 	"time"
 
@@ -142,7 +141,7 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 				print(err)
 			}
 		case "sendmail":
-			err := webutils.SendMail("smtp.yopmail.com:25", (&mail.Address{"M3u App", "toto@ovh.com"}).String(), "test", "test", []string{((&mail.Address{"App", "m3uproxy@yopmail.com"}).String())})
+			err := webutils.SendMail("smtp.yopmail.com:25", "<toto@ovh.com>", "test", "test", []string{("m3uproxy@yopmail.com")})
 			if err != nil {
 				fmt.Println(err.Error())
 			}
