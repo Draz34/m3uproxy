@@ -68,6 +68,7 @@ func TracingRedirect(myURL string) {
 		resp, err := client.Head(nextURL)
 
 		if err != nil {
+			fmt.Println(err.Error())
 			break
 		}
 
