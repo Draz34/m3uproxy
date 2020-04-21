@@ -25,8 +25,11 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 		Action := r.FormValue("action")
 		Username := r.FormValue("username")
 		Password := r.FormValue("password")
+		categorieNum := r.FormValue("category_id")
+		streamNum := r.FormValue("stream_id")
 		serieNum := r.FormValue("series_id")
 		vodNum := r.FormValue("vod_id")
+		Limit := r.FormValue("limit")
 
 		bodyStr := `{
 			"user_info": {
@@ -37,11 +40,14 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 		usr := db.GetUser(Username, Password)
 		if usr.ID > 0 {
 			formData := url.Values{
-				"username":  {config.Xtream.Username},
-				"password":  {config.Xtream.Password},
-				"action":    {Action},
-				"series_id": {serieNum},
-				"vod_id":    {vodNum},
+				"username":    {config.Xtream.Username},
+				"password":    {config.Xtream.Password},
+				"action":      {Action},
+				"category_id": {categorieNum},
+				"stream_id":   {streamNum},
+				"series_id":   {serieNum},
+				"vod_id":      {vodNum},
+				"limit":       {Limit},
 			}
 
 			urlString := "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/player_api.php"
@@ -63,7 +69,7 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 
 			urlRequest := urlString
 			if Action != "" {
-				urlRequest = urlString + "?action=" + Action + "&series_id=" + serieNum + "&vod_id=" + vodNum
+				urlRequest = urlString + "?action=" + Action + "&category_id=" + categorieNum + "&stream_id=" + streamNum + "&series_id=" + serieNum + "&vod_id=" + vodNum + "&limit=" + Limit
 			} else {
 				//fix json errors
 				var re = regexp.MustCompile(`"(.*)": ([^"].*),`)

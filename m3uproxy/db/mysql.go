@@ -12,7 +12,6 @@ var db *sql.DB
 var dbGorm *gorm.DB
 
 type User struct {
-	gorm.Model
 	ID             int
 	Username       string
 	Password       string
