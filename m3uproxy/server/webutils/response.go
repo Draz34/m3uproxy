@@ -131,7 +131,7 @@ func SendMail(addr, from, subject, body string, to []string) error {
 	}
 	defer c.Close()
 
-	if err = c.Hello("smtp.yopmail.com"); err != nil {
+	if err = c.Hello("smtp.ovh.com"); err != nil {
 		return err
 	}
 
