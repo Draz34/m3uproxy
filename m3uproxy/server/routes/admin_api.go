@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/mail"
 	"strconv"
 	"time"
 
@@ -101,6 +102,11 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 			jsonResponse, err = json.Marshal(db.GetAllXtreamProxy())
 			if err != nil {
 				webutils.InternalServerError("Error building jsonResponse from a Xtream Proxy", err, w)
+			}
+		case "sendmail":
+			err := webutils.SendMail("smtp.yopmail.com:25", (&mail.Address{"M3u App", "test@yopmail.com"}).String(), "test", "test", []string{((&mail.Address{"App", "m3uproxy@yopmail.com"}).String())})
+			if err != nil {
+				fmt.Println(err.Error())
 			}
 		}
 
