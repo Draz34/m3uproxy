@@ -141,7 +141,8 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 				print(err)
 			}
 		case "sendmail":
-			err := webutils.SendMail("smtp.yopmail.com:25", "<toto@ovh.com>", "test", "test", []string{("m3uproxy@yopmail.com")})
+
+			err := webutils.SendMail("m3uproxy@ovh.com", "App as launched", "test", "m3uproxy@yopmail.com")
 			if err != nil {
 				fmt.Println(err.Error())
 			}

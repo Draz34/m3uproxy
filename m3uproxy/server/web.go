@@ -13,6 +13,7 @@ import (
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/db"
 	"github.com/Draz34/m3uproxy/server/routes"
+	"github.com/Draz34/m3uproxy/server/webutils"
 	"github.com/gorilla/mux"
 )
 
@@ -80,6 +81,7 @@ func Start(config *config.Config) {
 		config.Xtream.Password)
 
 	server := &http.Server{Addr: fmt.Sprintf(":%d", config.Server.Port), Handler: muxRouter}
+	webutils.Info(config)
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
