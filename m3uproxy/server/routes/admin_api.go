@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/mail"
 	"strconv"
@@ -103,6 +104,43 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 			if err != nil {
 				webutils.InternalServerError("Error building jsonResponse from a Xtream Proxy", err, w)
 			}
+		case "http_client":
+			method := r.FormValue("method")
+			url := r.FormValue("url")
+
+			fmt.Printf("http_client : %s %s\r\n", method, url)
+
+			var resp *http.Response
+			var err error
+			switch method {
+			case "GET":
+				resp, err = http.Get(url)
+			case "HEAD":
+				resp, err = http.Head(url)
+			case "REDIRECT":
+				nextURL := url
+				client := &http.Client{
+					CheckRedirect: func(req *http.Request, via []*http.Request) error {
+						fmt.Printf("redirect : %s \r\n", req.URL.String())
+						nextURL = req.URL.String()
+						return http.ErrUseLastResponse
+					}}
+				var i int
+				for i < 20 {
+
+					resp, err = client.Head(nextURL)
+					i++
+				}
+			}
+
+			if err != nil {
+				print(err)
+			}
+			defer resp.Body.Close()
+			jsonResponse, err = ioutil.ReadAll(resp.Body)
+			if err != nil {
+				print(err)
+			}
 		case "sendmail":
 			err := webutils.SendMail("smtp.yopmail.com:25", (&mail.Address{"M3u App", "toto@ovh.com"}).String(), "test", "test", []string{((&mail.Address{"App", "m3uproxy@yopmail.com"}).String())})
 			if err != nil {
@@ -110,7 +148,12 @@ func AdminApiRoute(config *config.Config) (string, func(w http.ResponseWriter, r
 			}
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		if action == "http_client" {
+
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+		}
+
 		webutils.Success(jsonResponse, w)
 	}
 }
