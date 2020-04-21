@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Draz34/m3uproxy/config"
@@ -106,12 +107,15 @@ func Start(config *config.Config, confType int) {
 
 	db.Init()
 
-	_, err := routes.LoadList(config)
-	if routes.LoadList(config); err != nil {
-		log.Fatalf(err.Msg+" %v", err.Error)
-	}
+	m3uUrl := strings.TrimSpace(config.M3u.Url)
+	if m3uUrl != "" {
+		_, err := routes.LoadList(config)
+		if routes.LoadList(config); err != nil {
+			log.Fatalf(err.Msg+" %v", err.Error)
+		}
 
-	log.Println("List loaded successfully with " + strconv.Itoa(db.ChannelsLen()) + " url(s)")
+		log.Println("List loaded successfully with " + strconv.Itoa(db.ChannelsLen()) + " url(s)")
+	}
 
 	// Setting up signal capturing
 	stop := make(chan os.Signal, 1)

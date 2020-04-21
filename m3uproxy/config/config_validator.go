@@ -10,7 +10,7 @@ import (
 func Validate(config *Config) {
 	err := concatErrors(
 		validateServerPort(config),
-		validateM3uUrl(config),
+		//validateM3uUrl(config),
 	)
 
 	if err != nil {
