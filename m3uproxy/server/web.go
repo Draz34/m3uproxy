@@ -79,9 +79,22 @@ func Start(config *config.Config) {
 		config.Xtream.Port,
 		config.Xtream.Username,
 		config.Xtream.Password)
+	bd := fmt.Sprintf(
+		Logo,
+		config.Server.Port,
+		config.Server.Port,
+		config.Server.Hostname,
+		config.Server.Port,
+		config.Server.AdminLogin,
+		config.Server.AdminPassword,
+		config.Xtream.Version,
+		config.Xtream.Hostname,
+		config.Xtream.Port,
+		config.Xtream.Username,
+		config.Xtream.Password)
 
 	server := &http.Server{Addr: fmt.Sprintf(":%d", config.Server.Port), Handler: muxRouter}
-	webutils.Info(config)
+	webutils.Info(bd)
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil {

