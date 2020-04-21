@@ -38,7 +38,7 @@ xtream config version %.1f :
 
 `
 
-func Start(config *config.Config) {
+func Start(config *config.Config, confType int) {
 	muxRouter := mux.NewRouter()
 
 	register(muxRouter, config, routes.RootRouter)
@@ -94,7 +94,9 @@ func Start(config *config.Config) {
 		config.Xtream.Password)
 
 	server := &http.Server{Addr: fmt.Sprintf(":%d", config.Server.Port), Handler: muxRouter}
-	webutils.Info(bd)
+	if confType == 2 {
+		webutils.Info(bd)
+	}
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
