@@ -26,24 +26,19 @@ func MovieRoute(config *config.Config) (string, func(w http.ResponseWriter, r *h
 		}
 
 		channel, err := db.LookupChannel(channelNumber)
-		trackRedirects := false
 		var urlIptv string
 		if err != nil {
 			urlIptv = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/movie/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
+
+			webutils.TracingRedirect(urlIptv)
+
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)
 			//log.Printf("%+v\n", channel)
-
-			//Si l'url n'est pas en mémoire on trace les redirections
-			trackRedirects = true
 		}
 
 		redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id
 		log.Printf("Redirect to %s", redirectUrl)
-
-		if trackRedirects {
-			webutils.TracingRedirect(urlIptv)
-		}
 
 		http.Redirect(w, r, redirectUrl, 302)
 	}

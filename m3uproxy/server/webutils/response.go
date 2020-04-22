@@ -55,7 +55,7 @@ func writePayload(payload []byte, w http.ResponseWriter, isError bool) {
 	}
 }
 
-func TracingRedirect(myURL string) {
+func TracingRedirect(myURL string) (lastUrl string) {
 
 	nextURL := myURL
 	var i int
@@ -109,10 +109,13 @@ func TracingRedirect(myURL string) {
 			fmt.Println("Done!")
 			break
 		} else {
+			lastUrl = nextURL
 			fmt.Println("StatusCode:", resp.StatusCode)
 			fmt.Println(resp.Request.URL)
 		}
 	}
+
+	return
 }
 
 func GetMD5Hash(text string) string {

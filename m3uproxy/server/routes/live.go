@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/Draz34/m3uproxy/config"
 	"github.com/Draz34/m3uproxy/db"
@@ -13,10 +14,10 @@ import (
 
 func LiveRoute(config *config.Config) (string, func(w http.ResponseWriter, r *http.Request)) {
 
-	return "/live/{username}/{password}/{id}", func(w http.ResponseWriter, r *http.Request) {
+	return "/live/{username}/{password}/{id}.{ext}", func(w http.ResponseWriter, r *http.Request) {
 
 		vars := mux.Vars(r)
-		channelNumber := vars["id"]
+		channelNumber := vars["id"] + "." + vars["ext"]
 		username := vars["username"]
 		password := vars["password"]
 
@@ -26,24 +27,28 @@ func LiveRoute(config *config.Config) (string, func(w http.ResponseWriter, r *ht
 		}
 
 		channel, err := db.LookupChannel(channelNumber)
-		trackRedirects := false
+
 		var urlIptv string
+		var urlIptvTs string
 		if err != nil {
 			urlIptv = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/live/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
+			urlIptvTs = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/live/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + vars["id"] + ".ts"
+
+			lastUrlIptv := webutils.TracingRedirect(urlIptvTs)
+
+			if vars["ext"] == "m3u8" {
+				log.Printf("urlIptv url now : %s", urlIptv)
+				lastUrlIptv = strings.Replace(urlIptv, ".ts", ".m3u8", -1)
+				urlIptv = lastUrlIptv
+			}
+
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)
 			//log.Printf("%+v\n", channel)
-
-			//Si l'url n'est pas en mémoire on trace les redirections
-			trackRedirects = true
 		}
 
 		redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id
 		log.Printf("Redirect to %s", redirectUrl)
-
-		if trackRedirects {
-			webutils.TracingRedirect(urlIptv)
-		}
 
 		http.Redirect(w, r, redirectUrl, 302)
 	}
