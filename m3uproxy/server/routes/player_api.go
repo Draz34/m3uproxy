@@ -63,6 +63,11 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 				print(err)
 			}
 
+			//om := NewOrderedMap()
+			//err = json.Unmarshal(body, om)
+
+			//fmt.Print(om)
+
 			bodyStr = string(body)
 
 			//fmt.Println(string(body))
