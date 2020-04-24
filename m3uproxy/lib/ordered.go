@@ -1,13 +1,4 @@
-// Package ordered provided a type OrderedMap for use in JSON handling
-// although JSON spec says the keys order of an object should not matter
-// but sometimes when working with particular third-party proprietary code
-// which has incorrect using the keys order, we have to maintain the object keys
-// in the same order of incoming JSON object, this package is useful for these cases.
-//
-// Disclaimer:
-// same as Go's default [map](https://blog.golang.org/go-maps-in-action),
-// this OrderedMap is not safe for concurrent use, if need atomic access, may use a sync.Mutex to synchronize.
-package ordered
+package lib
 
 // Refers
 //  JSON and Go        https://blog.golang.org/json-and-go
