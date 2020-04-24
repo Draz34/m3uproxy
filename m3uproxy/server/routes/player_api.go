@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -63,17 +64,13 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 				print(err)
 			}
 
-			om := NewOrderedMap()
-			//err = json.Unmarshal(body, om)
-
-			//fmt.Print(om)
-
 			bodyStr = string(body)
 
 			//fmt.Println(string(body))
 
 			urlRequest := urlString
 			if Action != "" {
+				//reorderJson(bodyStr)
 				urlRequest = urlString + "?action=" + Action + "&category_id=" + categorieNum + "&stream_id=" + streamNum + "&series_id=" + serieNum + "&vod_id=" + vodNum + "&limit=" + Limit
 			} else {
 				//fix json errors
@@ -119,4 +116,56 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(bodyStr))
 	}
+}
+
+type Array struct {
+	Key   int
+	Value map[string]interface{}
+}
+
+type List struct {
+	Collection []Array
+}
+
+func reorderJson(jsonStr string) {
+	var re = regexp.MustCompile(`"(.*)": ([^"].*),`)
+	jsonStr = re.ReplaceAllString(jsonStr, `"$1": "$2",`)
+	jsonStr = strings.Replace(jsonStr, `90"LAR`, `90 LAR`, -1)
+
+	//jsonStr = `[{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"},{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"},{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"},{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"}]`
+
+	keys := make([]Array, 0)
+	json.Unmarshal([]byte(jsonStr), &keys)
+
+	for _, v := range keys {
+		fmt.Printf("%-12s: %v\n", v.Key, v.Value)
+	}
+
+	/*
+		reader := strings.NewReader(jsonStr)
+		writer := os.Stdout
+
+		dec := json.NewDecoder(reader)
+		enc := json.NewEncoder(writer)
+
+		for {
+			// Read one JSON object and store it in a map.
+			var m map[string]interface{}
+			if err := dec.Decode(&m); err == io.EOF {
+				break
+			} else if err != nil {
+				log.Fatal(err)
+			}
+
+			// Remove all key-value pairs with key == "Age" from the map.
+			for k, v := range m {
+				fmt.Printf("%-12s: %v\n", k, v)
+			}
+
+			// Write the map as a JSON object.
+			if err := enc.Encode(&m); err != nil {
+				log.Println(err)
+			}
+		}
+	*/
 }
