@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -70,8 +71,89 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 
 			urlRequest := urlString
 			if Action != "" {
-				//reorderJson(bodyStr)
+				var sortDatas bool = true
+
 				urlRequest = urlString + "?action=" + Action + "&category_id=" + categorieNum + "&stream_id=" + streamNum + "&series_id=" + serieNum + "&vod_id=" + vodNum + "&limit=" + Limit
+				switch Action {
+				case "get_vod_streams":
+					var movies = make([]db.Movie, 0)
+					err = json.Unmarshal(body, &movies)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+
+					for k, _ := range movies {
+						movies[k].Name = strings.TrimSpace(movies[k].Name)
+					}
+
+					sort.SliceStable(movies, func(i, j int) bool {
+						return movies[i].Name < movies[j].Name
+					})
+
+					//fmt.Println(movies)
+
+					body, err = json.Marshal(movies)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+					if sortDatas {
+						bodyStr = string(body)
+					}
+				case "get_series":
+					var series = make([]db.Serie, 0)
+					err = json.Unmarshal(body, &series)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+
+					for k, _ := range series {
+						series[k].Name = strings.TrimSpace(series[k].Name)
+					}
+
+					sort.SliceStable(series, func(i, j int) bool {
+						return series[i].Name < series[j].Name
+					})
+
+					//fmt.Println(movies)
+
+					body, err = json.Marshal(series)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+					if sortDatas {
+						bodyStr = string(body)
+					}
+				case "get_live_streams":
+					var lives = make([]db.Live, 0)
+					err = json.Unmarshal(body, &lives)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+
+					for k, _ := range lives {
+						lives[k].Name = strings.TrimSpace(lives[k].Name)
+					}
+
+					sort.SliceStable(lives, func(i, j int) bool {
+						return lives[i].Name < lives[j].Name
+					})
+
+					//fmt.Println(movies)
+
+					body, err = json.Marshal(lives)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+					if sortDatas {
+						bodyStr = string(body)
+					}
+				}
 			} else {
 				//fix json errors
 				var re = regexp.MustCompile(`"(.*)": ([^"].*),`)
