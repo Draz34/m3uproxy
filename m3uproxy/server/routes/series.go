@@ -29,7 +29,7 @@ func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *
 		var urlIptv string = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/series/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
 		if err != nil {
 			//urlIptv = webutils.TracingRedirect(urlIptv)
-			webutils.TracingRedirect(urlIptv)
+			go webutils.TracingRedirect(urlIptv)
 
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)

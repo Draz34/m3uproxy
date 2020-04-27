@@ -28,7 +28,7 @@ func MovieRoute(config *config.Config) (string, func(w http.ResponseWriter, r *h
 		channel, err := db.LookupChannel(channelNumber)
 		var urlIptv string = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/movie/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
 		if err != nil {
-			webutils.TracingRedirect(urlIptv)
+			go webutils.TracingRedirect(urlIptv)
 
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)
