@@ -105,13 +105,15 @@ func TracingRedirect(myURL string) (lastUrl string) {
 		nextURL = resp.Header.Get("Location")
 		i += 1
 
+		fmt.Printf("StatusCode : %d Url : %s", resp.StatusCode, resp.Request.URL)
+
 		if resp.StatusCode == 200 {
-			fmt.Println("Done!")
+			//fmt.Println("Done!")
 			break
 		} else {
 			lastUrl = nextURL
-			fmt.Println("StatusCode:", resp.StatusCode)
-			fmt.Println(resp.Request.URL)
+			//fmt.Println("StatusCode:", resp.StatusCode)
+			//fmt.Println(resp.Request.URL)
 		}
 	}
 

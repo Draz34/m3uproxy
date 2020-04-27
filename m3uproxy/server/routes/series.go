@@ -26,16 +26,17 @@ func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *
 		}
 
 		channel, err := db.LookupChannel(channelNumber)
-		var urlIptv string
+		var urlIptv string = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/series/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
 		if err != nil {
-			urlIptv = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/series/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
-
 			//urlIptv = webutils.TracingRedirect(urlIptv)
 			webutils.TracingRedirect(urlIptv)
 
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)
 			//log.Printf("%+v\n", channel)
+		} else {
+			log.Printf("Update Channel for %s", urlIptv)
+			channel, _ = db.UpdateChannel(channelNumber, urlIptv)
 		}
 
 		redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id

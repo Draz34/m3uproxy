@@ -42,6 +42,21 @@ func RegisterChannel(channelAddr string) (channel *Channel, err error) {
 	return
 }
 
+func UpdateChannel(channelID string, channelURL string) (channel *Channel, err error) {
+	urlChannel, err := url.Parse(channelURL)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing url: %s", channelURL)
+	}
+
+	channelsDB[channelID] = &Channel{
+		Id:     channelID,
+		Source: urlChannel,
+	}
+
+	return channelsDB[channelID], nil
+
+}
+
 func LookupChannel(id string) (channel *Channel, err error) {
 	channel = channelsDB[id]
 	if channel == nil {

@@ -28,12 +28,9 @@ func LiveRoute(config *config.Config) (string, func(w http.ResponseWriter, r *ht
 
 		channel, err := db.LookupChannel(channelNumber)
 
-		var urlIptv string
-		var urlIptvTs string
+		var urlIptv string = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/live/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
+		var urlIptvTs string = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/live/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + vars["id"] + ".ts"
 		if err != nil {
-			urlIptv = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/live/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
-			urlIptvTs = "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/live/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + vars["id"] + ".ts"
-
 			lastUrlIptv := webutils.TracingRedirect(urlIptvTs)
 
 			if vars["ext"] == "m3u8" {
@@ -45,6 +42,9 @@ func LiveRoute(config *config.Config) (string, func(w http.ResponseWriter, r *ht
 			log.Printf("Register Channel for %s", urlIptv)
 			channel, _ = db.RegisterChannel(urlIptv)
 			//log.Printf("%+v\n", channel)
+		} else {
+			log.Printf("Update Channel for %s", urlIptv)
+			channel, _ = db.UpdateChannel(channelNumber, urlIptv)
 		}
 
 		redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id
