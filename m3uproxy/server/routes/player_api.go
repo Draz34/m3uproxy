@@ -33,6 +33,10 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 		vodNum := r.FormValue("vod_id")
 		Limit := r.FormValue("limit")
 
+		if categorieNum == "ALL" {
+			categorieNum = ""
+		}
+
 		bodyStr := `{
 			"user_info": {
 			  "auth": 0
@@ -75,6 +79,75 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 
 				urlRequest = urlString + "?action=" + Action + "&category_id=" + categorieNum + "&stream_id=" + streamNum + "&series_id=" + serieNum + "&vod_id=" + vodNum + "&limit=" + Limit
 				switch Action {
+				case "get_vod_categories":
+					var moviesCategories = make([]db.MovieCategorie, 0)
+					set := make(map[string]db.MovieCategorie)
+
+					err = json.Unmarshal(body, &moviesCategories)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+
+					for k, _ := range moviesCategories {
+						set[moviesCategories[k].CategoryID] = moviesCategories[k]
+						moviesCategories[k].CategoryName = strings.TrimSpace(moviesCategories[k].CategoryName)
+					}
+
+					sort.SliceStable(moviesCategories, func(i, j int) bool {
+						return moviesCategories[i].CategoryName < moviesCategories[j].CategoryName
+					})
+
+					//fmt.Println(moviesCategories2)
+
+					//Liste les vod, rajoute les catégories si elles n'existent pas
+					var movies = make([]db.Movie, 0)
+					formData = url.Values{
+						"username": {config.Xtream.Username},
+						"password": {config.Xtream.Password},
+						"action":   {"get_vod_streams"},
+					}
+
+					resp2, err := http.PostForm(urlString, formData)
+					if err != nil {
+						print(err)
+					}
+
+					defer resp2.Body.Close()
+					body2, err := ioutil.ReadAll(resp2.Body)
+					if err != nil {
+						print(err)
+					}
+
+					err = json.Unmarshal(body2, &movies)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+
+					for k, _ := range movies {
+						if _, ok := set[movies[k].CategoryID]; ok {
+							//fmt.Println("element found")
+						} else {
+							newCat := db.MovieCategorie{
+								CategoryID:   movies[k].CategoryID,
+								CategoryName: "Categorie " + movies[k].CategoryID,
+								ParentID:     0,
+							}
+							set[movies[k].CategoryID] = newCat
+							moviesCategories = append(moviesCategories, newCat)
+						}
+					}
+					//Fin liste vod
+
+					body, err = json.Marshal(moviesCategories)
+					if err != nil {
+						fmt.Print(err)
+						sortDatas = false
+					}
+					if sortDatas {
+						bodyStr = string(body)
+					}
 				case "get_vod_streams":
 					var movies = make([]db.Movie, 0)
 					err = json.Unmarshal(body, &movies)
@@ -200,54 +273,95 @@ func PlayerApiRoute(config *config.Config) (string, func(w http.ResponseWriter, 
 	}
 }
 
-type Array struct {
-	Key   int
-	Value map[string]interface{}
-}
+func addMovie(proxy db.XtreamProxy) (version string, liveCount int, movieCount int, serieCount int) {
+	urlString := "http://" + proxy.Domain + ":" + proxy.Port + "/player_api.php"
+	urlString2 := "http://" + proxy.Domain + ":" + proxy.Port + "/panel_api.php"
 
-type List struct {
-	Collection []Array
-}
-
-func reorderJson(jsonStr string) {
-	var re = regexp.MustCompile(`"(.*)": ([^"].*),`)
-	jsonStr = re.ReplaceAllString(jsonStr, `"$1": "$2",`)
-	jsonStr = strings.Replace(jsonStr, `90"LAR`, `90 LAR`, -1)
-
-	//jsonStr = `[{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"},{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"},{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"},{"as":"AS15169 Google Inc.","city":"Mountain View","country":"United States","countryCode":"US","isp":"Google Cloud","lat":37.4192,"lon":-122.0574,"org":"Google Cloud","query":"35.192.25.53","region":"CA","regionName":"California","status":"success","timezone":"America/Los_Angeles","zip":"94043"}]`
-
-	keys := make([]Array, 0)
-	json.Unmarshal([]byte(jsonStr), &keys)
-
-	for _, v := range keys {
-		fmt.Printf("%-12s: %v\n", v.Key, v.Value)
+	//Lives
+	formData := url.Values{
+		"username": {proxy.Username},
+		"password": {proxy.Password},
+		"action":   {"get_live_streams"},
 	}
 
-	/*
-		reader := strings.NewReader(jsonStr)
-		writer := os.Stdout
-
-		dec := json.NewDecoder(reader)
-		enc := json.NewEncoder(writer)
-
-		for {
-			// Read one JSON object and store it in a map.
-			var m map[string]interface{}
-			if err := dec.Decode(&m); err == io.EOF {
-				break
-			} else if err != nil {
-				log.Fatal(err)
-			}
-
-			// Remove all key-value pairs with key == "Age" from the map.
-			for k, v := range m {
-				fmt.Printf("%-12s: %v\n", k, v)
-			}
-
-			// Write the map as a JSON object.
-			if err := enc.Encode(&m); err != nil {
-				log.Println(err)
-			}
+	version = "2"
+	resp2, err := http.PostForm(urlString, formData)
+	if err != nil {
+		print(err)
+		urlString = urlString2
+		resp2, err = http.PostForm(urlString, formData)
+		if err != nil {
+			print(err)
 		}
-	*/
+		version = "1"
+	}
+
+	defer resp2.Body.Close()
+	body2, err := ioutil.ReadAll(resp2.Body)
+	if err != nil {
+		print(err)
+	}
+
+	var jsonObjs interface{}
+	json.Unmarshal(body2, &jsonObjs)
+	objSlice, ok := jsonObjs.([]interface{})
+
+	if !ok {
+		fmt.Println("cannot convert the JSON objects")
+	}
+	liveCount = len(objSlice)
+
+	//Movies
+	formData = url.Values{
+		"username": {proxy.Username},
+		"password": {proxy.Password},
+		"action":   {"get_vod_streams"},
+	}
+
+	resp2, err = http.PostForm(urlString, formData)
+	if err != nil {
+		print(err)
+	}
+
+	defer resp2.Body.Close()
+	body2, err = ioutil.ReadAll(resp2.Body)
+	if err != nil {
+		print(err)
+	}
+
+	json.Unmarshal(body2, &jsonObjs)
+	objSlice, ok = jsonObjs.([]interface{})
+
+	if !ok {
+		fmt.Println("cannot convert the JSON objects")
+	}
+	movieCount = len(objSlice)
+
+	//Series
+	formData = url.Values{
+		"username": {proxy.Username},
+		"password": {proxy.Password},
+		"action":   {"get_series"},
+	}
+
+	resp2, err = http.PostForm(urlString, formData)
+	if err != nil {
+		print(err)
+	}
+
+	defer resp2.Body.Close()
+	body2, err = ioutil.ReadAll(resp2.Body)
+	if err != nil {
+		print(err)
+	}
+
+	json.Unmarshal(body2, &jsonObjs)
+	objSlice, ok = jsonObjs.([]interface{})
+
+	if !ok {
+		fmt.Println("cannot convert the JSON objects")
+	}
+	serieCount = len(objSlice)
+
+	return
 }
