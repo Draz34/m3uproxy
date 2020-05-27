@@ -39,7 +39,8 @@ func SeriesRoute(config *config.Config) (string, func(w http.ResponseWriter, r *
 			channel, _ = db.UpdateChannel(channelNumber, urlIptv)
 		}
 
-		redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id
+		//redirectUrl := "http://" + config.Server.Hostname + ":" + strconv.Itoa(int(config.Server.Port)) + "/channels/" + username + "/" + password + "/" + channel.Id
+		redirectUrl := "http://" + config.Xtream.Hostname + ":" + strconv.Itoa(int(config.Xtream.Port)) + "/series/" + config.Xtream.Username + "/" + config.Xtream.Password + "/" + channelNumber
 		log.Printf("Redirect to %s", redirectUrl)
 
 		http.Redirect(w, r, redirectUrl, 302)
