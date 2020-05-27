@@ -20,6 +20,7 @@ package db
     "episode_run_time": "60",
     "category_id": "28"
 */
+/*
 type Serie struct {
 	Num            int      `json:"num"`
 	Name           string   `json:"name"`
@@ -33,6 +34,25 @@ type Serie struct {
 	LastModified   string   `json:"last_modified"`
 	Rating         string   `json:"rating"`
 	Rating5based   float32  `json:"rating_5based"`
+	BackdropPath   []string `json:"backdrop_path"`
+	YoutubeTrailer string   `json:"youtube_trailer"`
+	EpisodeRunTime string   `json:"episode_run_time"`
+	CategoryID     string   `json:"category_id"`
+}
+*/
+type Serie struct {
+	Num            int      `json:"num"`
+	Name           string   `json:"name"`
+	SeriesID       int      `json:"series_id"`
+	Cover          string   `json:"cover"`
+	Plot           string   `json:"plot"`
+	Cast           string   `json:"cast"`
+	Director       string   `json:"director"`
+	Genre          string   `json:"genre"`
+	ReleaseDate    string   `json:"releaseDate"`
+	LastModified   string   `json:"last_modified"`
+	Rating         string   `json:"rating"`
+	Rating5Based   int      `json:"rating_5based"`
 	BackdropPath   []string `json:"backdrop_path"`
 	YoutubeTrailer string   `json:"youtube_trailer"`
 	EpisodeRunTime string   `json:"episode_run_time"`

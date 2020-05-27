@@ -14,6 +14,7 @@ package db
    "direct_source": "",
    "tv_archive_duration": 0
 */
+/*
 type Live struct {
 	Num               string `json:"num"`
 	Name              string `json:"name"`
@@ -27,6 +28,21 @@ type Live struct {
 	TvArchive         int    `json:"tv_archive"`
 	DirectSource      string `json:"direct_source"`
 	TvArchiveDuration int    `json:"tv_archive_duration"`
+}
+*/
+type Live struct {
+	Num                int     `json:"num"`
+	Name               string  `json:"name"`
+	StreamType         string  `json:"stream_type"`
+	StreamID           int     `json:"stream_id"`
+	StreamIcon         string  `json:"stream_icon"`
+	Rating             string  `json:"rating"`
+	Rating5Based       float64 `json:"rating_5based"`
+	Added              string  `json:"added"`
+	CategoryID         string  `json:"category_id"`
+	ContainerExtension string  `json:"container_extension"`
+	CustomSid          string  `json:"custom_sid"`
+	DirectSource       string  `json:"direct_source"`
 }
 
 /*

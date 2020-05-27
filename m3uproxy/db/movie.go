@@ -14,6 +14,7 @@ package db
     "custom_sid": "",
     "direct_source": ""
 */
+/*
 type Movie struct {
 	ID                 string  `json:"num"`
 	Name               string  `json:"name"`
@@ -22,6 +23,21 @@ type Movie struct {
 	StreamIcon         string  `json:"stream_icon"`
 	Rating             string  `json:"rating"`
 	Rating5based       float32 `json:"rating_5based"`
+	Added              string  `json:"added"`
+	CategoryID         string  `json:"category_id"`
+	ContainerExtension string  `json:"container_extension"`
+	CustomSid          string  `json:"custom_sid"`
+	DirectSource       string  `json:"direct_source"`
+}
+*/
+type Movie struct {
+	Num                int     `json:"num"`
+	Name               string  `json:"name"`
+	StreamType         string  `json:"stream_type"`
+	StreamID           int     `json:"stream_id"`
+	StreamIcon         string  `json:"stream_icon"`
+	Rating             string  `json:"rating"`
+	Rating5Based       float64 `json:"rating_5based"`
 	Added              string  `json:"added"`
 	CategoryID         string  `json:"category_id"`
 	ContainerExtension string  `json:"container_extension"`
