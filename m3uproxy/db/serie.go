@@ -52,7 +52,7 @@ type Serie struct {
 	ReleaseDate    string   `json:"releaseDate"`
 	LastModified   string   `json:"last_modified"`
 	Rating         string   `json:"rating"`
-	Rating5Based   int      `json:"rating_5based"`
+	Rating5Based   float32  `json:"rating_5based"`
 	BackdropPath   []string `json:"backdrop_path"`
 	YoutubeTrailer string   `json:"youtube_trailer"`
 	EpisodeRunTime string   `json:"episode_run_time"`
